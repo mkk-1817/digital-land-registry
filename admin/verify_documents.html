@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify Documents - Digital Land Registry{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0">Document Verification</h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        {% if property.imageUrl %}
+                            <img src="{{ property.imageUrl }}" class="img-fluid rounded" alt="{{ property.title }}">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 200px;">
+                                <span class="text-muted">No Image</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <h4>{{ property.title }}</h4>
+                        <p><strong>Location:</strong> {{ property.location }}</p>
+                        <p><strong>Area:</strong> {{ property.area }} sq.ft</p>
+                        <p><strong>Value:</strong> ₹{{ property.value | int }}</p>
+                        <p><strong>Owner:</strong> {{ property.ownerName }}</p>
+                        <p><strong>Registration Number:</strong> {{ property.registrationNumber }}</p>
+                    </div>
+                </div>
+                
+                <h5 class="mb-3">Property Data Verification</h5>
+                <div class="alert {% if property_data_authentic %}alert-success{% else %}alert-danger{% endif %}">
+                    <p class="mb-0">
+                        <strong>Property Data Hash:</strong> 
+                        {% if property_data_authentic %}
+                            <span class="text-success">Verified ✓</span>
+                        {% else %}
+                            <span class="text-danger">Invalid ✗</span>
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <h5 class="mt-4 mb-3">Document Verification Results</h5>
+                {% if documents %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Document Name</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc in documents %}
+                                    <tr>
+                                        <td>{{ doc.name }}</td>
+                                        <td>
+                                            {% if doc.isAuthentic %}
+                                                <span class="badge bg-success">Authentic ✓</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Tampered ✗</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        No documents found for this property.
+                    </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+                    <div>
+                        <a href="{{ url_for('reject_property', property_id=property._id) }}" class="btn btn-danger me-2">Reject</a>
+                        <a href="{{ url_for('approve_property', property_id=property._id) }}" class="btn btn-success">Approve</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

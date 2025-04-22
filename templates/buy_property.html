@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Buy Property - Digital Land Registry{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">Buy Property</h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        {% if property.imageUrl %}
+                            <img src="{{ property.imageUrl }}" class="img-fluid rounded" alt="{{ property.title }}">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 200px;">
+                                <span class="text-muted">No Image</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <h4>{{ property.title }}</h4>
+                        <p><strong>Location:</strong> {{ property.location }}</p>
+                        <p><strong>Area:</strong> {{ property.area }} sq.ft</p>
+                        <p><strong>Asking Price:</strong> ₹{{ property.askingPrice | int }}</p>
+                        <p><strong>Seller:</strong> {{ property.ownerName }}</p>
+                        <p><strong>Registration Number:</strong> {{ property.registrationNumber }}</p>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <p class="mb-0">By purchasing this property, you agree to the terms and conditions of the Digital Land Registry platform. The ownership transfer will be recorded in the system and will be legally binding.</p>
+                </div>
+                
+                <form method="POST" action="{{ url_for('buy_property', property_id=property._id) }}">
+                    <div class="button-position">
+                        <button type="submit" class="btn btn-success">Confirm Purchase (₹{{ property.askingPrice | int }})</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

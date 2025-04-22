@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Properties - Digital Land Registry{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Search Properties</h3>
+            </div>
+            <div class="card-body">
+                <p class="lead">Enter search criteria to find properties using our divide and conquer algorithm.</p>
+                
+                <form method="POST" action="{{ url_for('search_properties_route') }}">
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" name="location" placeholder="Enter city, state, or area">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="min_price" class="form-label">Minimum Price (₹)</label>
+                            <input type="number" class="form-control" id="min_price" name="min_price">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="max_price" class="form-label">Maximum Price (₹)</label>
+                            <input type="number" class="form-control" id="max_price" name="max_price">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="min_area" class="form-label">Minimum Area (sq.ft)</label>
+                            <input type="number" class="form-control" id="min_area" name="min_area">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="max_area" class="form-label">Maximum Area (sq.ft)</label>
+                            <input type="number" class="form-control" id="max_area" name="max_area">
+                        </div>
+                    </div>
+                    
+                    <div class="button-position mt-3">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Results - Digital Land Registry{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Search Results</h1>
+    <a href="{{ url_for('search_properties_route') }}" class="btn btn-outline-primary">New Search</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Search Criteria</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <p><strong>Location:</strong> {{ criteria.location or 'Any' }}</p>
+            </div>
+            <div class="col-md-3">
+                <p><strong>Price Range:</strong> 
+                    {% if criteria.minPrice or criteria.maxPrice %}
+                        {% if criteria.minPrice %}₹{{ criteria.minPrice | int }}{% else %}₹0{% endif %} - 
+                        {% if criteria.maxPrice %}₹{{ criteria.maxPrice | int }}{% else %}Any{% endif %}
+                    {% else %}
+                        Any
+                    {% endif %}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Area Range:</strong> 
+                    {% if criteria.minArea or criteria.maxArea %}
+                        {% if criteria.minArea %}{{ criteria.minArea | int }}{% else %}0{% endif %} - 
+                        {% if criteria.maxArea %}{{ criteria.maxArea | int }}{% else %}Any{% endif %} sq.ft
+                    {% else %}
+                        Any
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if properties %}
+    <p>Found {{ properties|length }} properties matching your criteria.</p>
+    
+    <div class="row">
+        {% for property in properties %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if property.imageUrl %}
+                        <img src="{{ property.imageUrl }}" class="card-img-top" alt="{{ property.title }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <span class="text-muted">No Image</span>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ property.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ property.location }}</h6>
+                        <p class="card-text">
+                            <strong>Area:</strong> {{ property.area }} sq.ft<br>
+                            <strong>Value:</strong> ₹{{ property.value | int }}<br>
+                            {% if property.forSale %}
+                                <strong>Asking Price:</strong> ₹{{ property.askingPrice | int }}<br>
+                                <strong>Seller:</strong> {{ property.ownerName }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="button-position">
+                            {% if property.forSale %}
+                                <a href="{{ url_for('buy_property', property_id=property._id) }}" class="btn btn-success">Buy Property</a>
+                            {% else %}
+                                <button class="btn btn-secondary" disabled>Not For Sale</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        No properties match your search criteria. Try adjusting your filters.
+    </div>
+{% endif %}
+{% endblock %}

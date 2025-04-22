@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Digital Land Registry{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">User Dashboard</h1>
+
+<ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="properties-tab" data-bs-toggle="tab" data-bs-target="#properties" type="button" role="tab">My Properties</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="available-tab" data-bs-toggle="tab" data-bs-target="#available" type="button" role="tab">Available Properties</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="auctions-tab" data-bs-toggle="tab" data-bs-target="#auctions" type="button" role="tab">Active Auctions</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="add-tab" data-bs-toggle="tab" data-bs-target="#add" type="button" role="tab">Add Property</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="dashboardTabsContent">
+    <!-- My Properties Tab -->
+    <div class="tab-pane fade show active" id="properties" role="tabpanel">
+        <div class="d-flex justify-content-between mb-3">
+            <h2>My Properties</h2>
+        </div>
+        
+        {% if user_properties %}
+            <div class="row">
+                {% for property in user_properties %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            {% if property.imageUrl %}
+                                <img src="{{ property.imageUrl }}" class="card-img-top" alt="{{ property.title }}" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <span class="text-muted">No Image</span>
+                                </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ property.title }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ property.location }}</h6>
+                                <p class="card-text">
+                                    <strong>Area:</strong> {{ property.area }} sq.ft<br>
+                                    <strong>Value:</strong> ₹{{ property.value | int }}<br>
+                                    <strong>Registration #:</strong> {{ property.registrationNumber }}
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="button-position gap-2">
+                                    <a href="{{ url_for('sell_property', property_id=property._id) }}" class="btn btn-primary">List for Sale</a>
+                                    <a href="{{ url_for('create_auction', property_id=property._id) }}" class="btn btn-outline-primary">Create Auction</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                You don't have any properties yet. You can add a new property or purchase an available property.
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Available Properties Tab -->
+    <div class="tab-pane fade" id="available" role="tabpanel">
+        <div class="d-flex justify-content-between mb-3">
+            <h2>Available Properties</h2>
+            <a href="{{ url_for('find_optimal_properties_route') }}" class="btn btn-primary">Find Optimal Properties</a>
+        </div>
+        
+        {% if available_properties %}
+            <div class="row">
+                {% for property in available_properties %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            {% if property.imageUrl %}
+                                <img src="{{ property.imageUrl }}" class="card-img-top" alt="{{ property.title }}" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <span class="text-muted">No Image</span>
+                                </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ property.title }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ property.location }}</h6>
+                                <p class="card-text">
+                                    <strong>Area:</strong> {{ property.area }} sq.ft<br>
+                                    <strong>Asking Price:</strong> ₹{{ property.askingPrice | int }}<br>
+                                    <strong>Seller:</strong> {{ property.ownerName }}
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="button-position">
+                                    <a href="{{ url_for('buy_property', property_id=property._id) }}" class="btn btn-success">Buy Property</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                No properties are currently available for purchase.
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Active Auctions Tab -->
+    <div class="tab-pane fade" id="auctions" role="tabpanel">
+        <h2 class="mb-3">Active Auctions</h2>
+        
+        {% if active_auctions %}
+            <div class="row">
+                {% for auction in active_auctions %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            {% if auction.property.imageUrl %}
+                                <img src="{{ auction.property.imageUrl }}" class="card-img-top" alt="{{ auction.property.title }}" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <span class="text-muted">No Image</span>
+                                </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ auction.property.title }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ auction.property.location }}</h6>
+                                <p class="card-text">
+                                    <strong>Starting Bid:</strong> ₹{{ auction.startingBid | int }}<br>
+                                    <strong>Current Highest Bid:</strong> ₹{{ auction.currentHighestBid | int }}<br>
+                                    <strong>Ends On:</strong> {{ auction.endDate.strftime('%Y-%m-%d %H:%M') }}
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="button-position">
+                                    <a href="{{ url_for('place_bid', auction_id=auction._id) }}" class="btn btn-warning">Place Bid</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                No active auctions at the moment.
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Add Property Tab -->
+    <div class="tab-pane fade" id="add" role="tabpanel">
+        <h2 class="mb-3">Add New Property</h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <form action="{{ url_for('add_property') }}" method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="title" class="form-label">Property Title</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="area" class="form-label">Area (sq.ft)</label>
+                            <input type="number" class="form-control" id="area" name="area" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="value" class="form-label">Estimated Value (₹)</label>
+                            <input type="number" class="form-control" id="value" name="value" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Property Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="image_url" class="form-label">Image URL</label>
+                        <input type="url" class="form-control" id="image_url" name="image_url">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="registration_number" class="form-label">Registration Number</label>
+                        <input type="text" class="form-control" id="registration_number" name="registration_number" required>
+                    </div>
+                    
+                    <div class="button-position">
+                        <button type="submit" class="btn btn-primary">Submit for Approval</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

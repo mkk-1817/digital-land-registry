@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Find Optimal Properties - Digital Land Registry{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card fade-in">
+            <div class="card-header bg-primary">
+                <h3 class="mb-0"><i class="fas fa-search me-2"></i>Find Optimal Properties</h3>
+            </div>
+            <div class="card-body">
+                <p class="lead">Enter your preferences to find the best properties using our greedy algorithm.</p>
+                
+                <form method="POST" action="{{ url_for('find_optimal_properties_route') }}">
+                    <div class="mb-3">
+                        <label for="location" class="form-label"><i class="fas fa-map-marker-alt me-2"></i>Preferred Location</label>
+                        <input type="text" class="form-control" id="location" name="location" placeholder="Enter city, area, or leave blank for any location">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="price" class="form-label"><i class="fas fa-rupee-sign me-2"></i>Budget (₹)</label>
+                            <input type="number" class="form-control" id="price" name="price" placeholder="Enter your budget">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="area" class="form-label"><i class="fas fa-vector-square me-2"></i>Preferred Area (sq.ft)</label>
+                            <input type="number" class="form-control" id="area" name="area" placeholder="Enter preferred area">
+                        </div>
+                    </div>
+                    
+                    <h5 class="mt-4 mb-3"><i class="fas fa-sliders-h me-2"></i>Preference Weights</h5>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="location_weight" class="form-label">Location Importance</label>
+                            <select class="form-select" id="location_weight" name="location_weight">
+                                <option value="1">Low</option>
+                                <option value="2" selected>Medium</option>
+                                <option value="3">High</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="price_weight" class="form-label">Price Importance</label>
+                            <select class="form-select" id="price_weight" name="price_weight">
+                                <option value="1">Low</option>
+                                <option value="2" selected>Medium</option>
+                                <option value="3">High</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="area_weight" class="form-label">Area Importance</label>
+                            <select class="form-select" id="area_weight" name="area_weight">
+                                <option value="1">Low</option>
+                                <option value="2" selected>Medium</option>
+                                <option value="3">High</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle me-2"></i> Our greedy algorithm will find properties that best match your preferences based on the weights you assign.
+                    </div>
+                    
+                    <div class="button-position mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Find Properties
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

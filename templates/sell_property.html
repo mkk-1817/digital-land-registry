@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Sell Property - Digital Land Registry{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">List Property for Sale</h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        {% if property.imageUrl %}
+                            <img src="{{ property.imageUrl }}" class="img-fluid rounded" alt="{{ property.title }}">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 200px;">
+                                <span class="text-muted">No Image</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <h4>{{ property.title }}</h4>
+                        <p><strong>Location:</strong> {{ property.location }}</p>
+                        <p><strong>Area:</strong> {{ property.area }} sq.ft</p>
+                        <p><strong>Estimated Value:</strong> ₹{{ property.value | int }}</p>
+                        <p><strong>Registration Number:</strong> {{ property.registrationNumber }}</p>
+                    </div>
+                </div>
+                
+                <form method="POST" action="{{ url_for('sell_property', property_id=property._id) }}">
+                    <div class="mb-3">
+                        <label for="asking_price" class="form-label">Asking Price (₹)</label>
+                        <input type="number" class="form-control" id="asking_price" name="asking_price" value="{{ property.value | int }}" required>
+                    </div>
+                    <div class="button-position">
+                        <button type="submit" class="btn btn-primary">List for Sale</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

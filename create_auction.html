@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Auction - Digital Land Registry{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Create Auction</h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        {% if property.imageUrl %}
+                            <img src="{{ property.imageUrl }}" class="img-fluid rounded" alt="{{ property.title }}">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 200px;">
+                                <span class="text-muted">No Image</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <h4>{{ property.title }}</h4>
+                        <p><strong>Location:</strong> {{ property.location }}</p>
+                        <p><strong>Area:</strong> {{ property.area }} sq.ft</p>
+                        <p><strong>Estimated Value:</strong> ₹{{ property.value | int }}</p>
+                        <p><strong>Registration Number:</strong> {{ property.registrationNumber }}</p>
+                    </div>
+                </div>
+                
+                <form method="POST" action="{{ url_for('create_auction', property_id=property._id) }}">
+                    <div class="mb-3">
+                        <label for="starting_bid" class="form-label">Starting Bid (₹)</label>
+                        <input type="number" class="form-control" id="starting_bid" name="starting_bid" value="{{ (property.value * 0.8) | int }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="end_date" class="form-label">End Date and Time</label>
+                        <input type="datetime-local" class="form-control" id="end_date" name="end_date" required>
+                    </div>
+                    <div class="button-position">
+                        <button type="submit" class="btn btn-primary">Create Auction</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Set default end date to 7 days from now
+    document.addEventListener('DOMContentLoaded', function() {
+        const now = new Date();
+        now.setDate(now.getDate() + 7);
+        
+        // Format date for datetime-local input
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+        const defaultEndDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+        document.getElementById('end_date').value = defaultEndDate;
+    });
+</script>
+{% endblock %}
